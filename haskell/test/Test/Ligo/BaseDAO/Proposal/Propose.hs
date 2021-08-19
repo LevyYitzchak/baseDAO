@@ -547,8 +547,8 @@ proposalStressTest originateFn = do
           advanceToLevel waitTill
 
   -- Create a thousand proposals in batchs of 100
-  forM_ [0..(9 :: Natural)] $ \count -> do
-    let multiplier = 100
+  forM_ [0..(99 :: Natural)] $ \count -> do
+    let multiplier = 10
     let range = [( count * multiplier + 1 ) .. ((count+1) * multiplier )]
     ensureProposalPeriod
 
