@@ -536,16 +536,13 @@ proposalStressTest originateFn = do
   withSender dodOwner1 $
     call dodDao (Call @"Freeze") (#amount .! 100000)
 
-  nowLevel <- getLevel
-  advanceToLevel (nowLevel + dodPeriod + 5)
-
   originLevel <- getOriginationLevel dodDao
 
   -- Ensure that we are in a proposal period, or wait, if we are not yet there.
   let ensureProposalPeriod = do
         nowLevel <- getLevel
         let periodNum = div ((nowLevel + 10) - originLevel) dodPeriod
-        when (mod periodNum 2 == 0) $ do
+        when (even periodNum) $ do
           let waitTill = originLevel + (periodNum + 1)*dodPeriod
           advanceToLevel waitTill
 
@@ -556,7 +553,7 @@ proposalStressTest originateFn = do
     ensureProposalPeriod
 
     withSender dodOwner1 $ inBatch $ do
-      traverse (\c ->
+      traverse_ (\c ->
         let params = ProposeParams
               { ppFrozenToken = 10
               , ppProposalMetadata = lPackValueRaw c
