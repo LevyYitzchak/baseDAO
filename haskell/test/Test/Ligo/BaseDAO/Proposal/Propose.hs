@@ -560,7 +560,6 @@ proposalStressTest originateFn = do
               , ppFrom = dodOwner1
               }
         in call dodDao (Call @"Propose") params) range
-      pure ()
 
   withSender dodOwner1 $
     call dodDao (Call @"Freeze") (#amount .! 1)
