@@ -2,6 +2,7 @@
 -- SPDX-License-Identifier: LicenseRef-MIT-TQ
 
 {-# LANGUAGE ApplicativeDo #-}
+{-# LANGUAGE NumericUnderscores #-}
 -- | Contains tests on @propose@ entrypoint logic for testing the Ligo contract.
 module Test.Ligo.BaseDAO.Proposal.Propose
   ( FailureReason(..)
@@ -532,6 +533,10 @@ proposalStressTest originateFn = do
   DaoOriginateData {..} <- originateFn
     ((ConfigDesc $ configConsts { cmMaxProposals = Just 1000 }) >>-
      (ConfigDesc $ Period 100) >>- testConfig) defaultQuorumThreshold
+
+  owner1Balance <- getBalance dodOwner1
+  when (owner1Balance < 1_e6) $ do
+    transfer $ TransferData dodOwner1 (toMutez 1_e6) DefEpName ()
 
   withSender dodOwner1 $
     call dodDao (Call @"Freeze") (#amount .! 100000)
