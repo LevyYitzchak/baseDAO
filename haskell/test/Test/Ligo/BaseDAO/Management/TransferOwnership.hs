@@ -72,7 +72,8 @@ changeToPendingAdmin withOriginatedFn initialStorage =
       withSender owner $ call baseDao (Call @"Transfer_ownership")
         (#newOwner .! wallet1)
       withSender wallet1 $ call baseDao (Call @"Accept_ownership") ()
-      -- TODO@SRAS Add test to check new owner is set
+      administrator <- (sAdminRPC . fsStorageRPC) <$> (getStorageRPC baseDao)
+      assert (administrator == wallet1) "Administrator was not set from pending owner"
 
 noPendingAdmin
   :: MonadNettest caps base m
